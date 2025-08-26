@@ -1,0 +1,45 @@
+name: Manage sub.txt expiry
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  manage-sub:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set or delete sub.txt
+        run: |
+          FILE="sub.txt"
+          if [ ! -f "$FILE" ]; then exit 0; fi
+          NOW=$(date +%s)
+          TOTAL_BYTES=1073741824000
+          EXPIRE_LINE=$(grep -m1 '^subscription-userinfo:' "$FILE" || true)
+          if [ -z "$EXPIRE_LINE" ]; then
+            NEW_EXP=$(( NOW + 30*24*3600 ))
+            sed -i "1s;^;subscription-userinfo: upload=0; download=0; total=${TOTAL_BYTES}; expire=${NEW_EXP}\n;" "$FILE"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add "$FILE"
+            git commit -m "Set subscription-userinfo expire=${NEW_EXP}" || echo "no changes"
+            git push origin HEAD:main || echo "push failed"
+            exit 0
+          fi
+          EXPIRE=$(echo "$EXPIRE_LINE" | sed -E 's/.*expire=([0-9]+).*/\1/')
+          if [ "$NOW" -ge "$EXPIRE" ]; then
+            rm "$FILE"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "Auto-delete expired sub.txt (expire=${EXPIRE})" || echo "no changes"
+            git push origin HEAD:main || echo "push failed"
+            exit 0
+          fi
+          echo "Subscription still valid (expire=${EXPIRE})"
