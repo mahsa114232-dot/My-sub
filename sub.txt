@@ -1,11 +1,11 @@
 profile-title: MyConfigs
 profile-update-interval: 1
-subscription-userinfo: upload=0; download=0; total=1073741824000; expire=1767212999
+subscription-userinfo: upload=0; download=0; total=1073741824000; expire=$(($(date +%s)+30*24*3600))
 profile-web-page-url: https://mahsa114232-dot.github.io/My-sub/
----
-# ======================
-# کانفیگ‌های شما
-# ======================
+
+======================
+کانفیگ‌های شما
+======================
 
 hysteria2://7f1ad19e-2cc1-4eec-a583-d61f63165dea@dehub.xg-hub.icu:25784?security=tls&obfs=salamander&obfs-password=ZDQxZDhjZDk4ZjAwYjIwNA%3D%3D&insecure=1&sni=dehub.xg-hub.icu
 hysteria2://7f1ad19e-2cc1-4eec-a583-d61f63165dea@ukhub.xg-hub.icu:25785?security=tls&obfs=salamander&obfs-password=ZDQxZDhjZDk4ZjAwYjIwNA%3D%3D&insecure=1&sni=ukhub.xg-hub.icu
